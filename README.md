@@ -1,6 +1,6 @@
-# Versículos Bíblicos no Terminal
+# Termu Linux — terbibli
 
-Aplicativo de linha de comando em Python que exibe versículos bíblicos no terminal com formatação colorida. A Bíblia completa em português (Almeida Atualizada — 31.104 versículos) é baixada automaticamente na primeira execução e salva em cache local, sem necessidade de nenhuma dependência externa.
+Ferramenta de linha de comando em Python que exibe versículos bíblicos no terminal com formatação colorida. A Bíblia completa em português (Almeida Atualizada — 31.104 versículos) é baixada automaticamente na primeira execução e salva em cache local, sem necessidade de nenhuma dependência externa.
 
 ---
 
@@ -13,6 +13,7 @@ O processo foi:
 2. Claude Code gerou a estrutura inicial com versículos fixos em um vetor
 3. Após feedback, foi refatorado para buscar a Bíblia completa automaticamente via internet
 4. Ajustes de encoding (UTF-8 BOM) e chaves do JSON foram corrigidos iterativamente
+5. Renomeado para **Termu Linux** com comando `terbibli` e camada de validação de entrada
 
 ---
 
@@ -43,7 +44,7 @@ O processo foi:
 
 ```
 versiculos/
-├── main.py           # Ponto de entrada — lê os argumentos e chama os módulos
+├── terbibli          # Executável — ponto de entrada do comando
 ├── biblia.py         # Download, cache e lógica (aleatorio, do_dia, buscar)
 ├── display.py        # Formatação e cores no terminal (caixas com ANSI escape codes)
 └── biblia_cache.json # Gerado automaticamente na 1ª execução (não versionar)
@@ -70,6 +71,10 @@ python3 --version
 # Clone o repositório
 git clone https://github.com/nameMatheusValverde/termbibli.git
 cd versiculos
+
+# Torne o executável e crie o atalho no terminal
+chmod +x terbibli
+ln -sf "$PWD/terbibli" ~/.local/bin/terbibli
 ```
 
 Não é necessário instalar nenhuma dependência. Na primeira execução o próprio programa baixa e salva a Bíblia localmente.
@@ -79,19 +84,29 @@ Não é necessário instalar nenhuma dependência. Na primeira execução o pró
 ## Como usar
 
 ```bash
-python3 main.py                      # versículo aleatório
-python3 main.py --dia                # mesmo versículo durante todo o dia
-python3 main.py --buscar <palavra>   # busca por palavra no texto ou livro
-python3 main.py --total              # exibe o total de versículos na Bíblia
+terbibli                     # versículo aleatório
+terbibli --dia               # mesmo versículo durante todo o dia
+terbibli --buscar <palavra>  # busca por palavra no texto ou livro
+terbibli --total             # exibe o total de versículos na Bíblia
 ```
 
 ### Exemplos
 
 ```bash
-python3 main.py --buscar amor
-python3 main.py --buscar salmos
-python3 main.py --dia
+terbibli --buscar amor
+terbibli --buscar salmos
+terbibli --dia
 ```
+
+---
+
+## Segurança
+
+O termo passado em `--buscar` é validado antes de qualquer processamento:
+
+- Não pode ser vazio
+- Máximo de 100 caracteres
+- Apenas letras, espaços e caracteres acentuados do português são aceitos
 
 ---
 
