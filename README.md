@@ -29,14 +29,15 @@ O processo foi:
 
 | Biblioteca | Uso no projeto |
 |---|---|
-| `argparse` | Leitura e validação dos argumentos da linha de comando (`--dia`, `--buscar`, etc.) |
+| `argparse` | Leitura e validação dos argumentos da linha de comando |
 | `json` | Leitura e escrita do cache local da Bíblia (`biblia_cache.json`) |
 | `random` | Sorteio aleatório de livro, capítulo e versículo |
-| `urllib.request` | Download do JSON da Bíblia direto do GitHub sem dependências externas |
+| `urllib.request` | Download do JSON da Bíblia direto do GitHub |
 | `pathlib` | Manipulação de caminhos de arquivo de forma multiplataforma |
 | `datetime` | Cálculo do versículo fixo do dia baseado na data atual |
-| `textwrap` | Quebra automática do texto do versículo conforme a largura do terminal |
-| `shutil` | Detecção da largura real do terminal para formatação da caixa |
+| `textwrap` | Quebra automática do texto do versículo |
+| `shutil` | Detecção da largura real do terminal |
+| `curses` | Leitor visual interativo da Bíblia completa |
 
 ---
 
@@ -44,10 +45,11 @@ O processo foi:
 
 ```
 versiculos/
-├── terbibli          # Executável — ponto de entrada do comando
-├── biblia.py         # Download, cache e lógica (aleatorio, do_dia, buscar)
-├── display.py        # Formatação e cores no terminal (caixas com ANSI escape codes)
-└── biblia_cache.json # Gerado automaticamente na 1ª execução (não versionar)
+├── terbibli           # Executável — ponto de entrada do comando
+├── biblia.py          # Download, cache e lógica (aleatorio, do_dia, buscar, buscar_tema)
+├── display.py         # Formatação e cores no terminal (caixas ANSI)
+├── biblia_visual.py   # Leitor visual interativo (curses TUI)
+└── biblia_cache.json  # Gerado automaticamente na 1ª execução (não versionar)
 ```
 
 ---
@@ -56,7 +58,7 @@ versiculos/
 
 - Python 3.10 ou superior
 - Conexão com internet **apenas na primeira execução** (para baixar a Bíblia)
-- Terminal com suporte a cores ANSI (qualquer terminal moderno no Linux/macOS)
+- Terminal com suporte a cores ANSI
 
 Para verificar sua versão do Python:
 ```bash
@@ -67,27 +69,74 @@ python3 --version
 
 ## Instalação
 
-```bash
-# Clone o repositório
-git clone https://github.com/nameMatheusValverde/termbibli.git
-cd versiculos
+### Linux
 
-# Torne o executável e crie o atalho no terminal
+```bash
+git clone https://github.com/nameMatheusValverde/termbibli.git
+cd termbibli/versiculos
+
 chmod +x terbibli
 ln -sf "$PWD/terbibli" ~/.local/bin/terbibli
 ```
 
-Não é necessário instalar nenhuma dependência. Na primeira execução o próprio programa baixa e salva a Bíblia localmente.
+Se `~/.local/bin` não estiver no PATH, adicione ao `~/.bashrc` ou `~/.zshrc`:
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+### macOS
+
+```bash
+git clone https://github.com/nameMatheusValverde/termbibli.git
+cd termbibli/versiculos
+
+chmod +x terbibli
+
+# Opção 1 — link simbólico (recomendado)
+mkdir -p ~/.local/bin
+ln -sf "$PWD/terbibli" ~/.local/bin/terbibli
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# Opção 2 — via /usr/local/bin (requer sudo)
+sudo ln -sf "$PWD/terbibli" /usr/local/bin/terbibli
+```
+
+> No macOS o Python nativo pode ser o 2.x. Instale o Python 3 via [Homebrew](https://brew.sh): `brew install python`
+
+### Windows
+
+**Via WSL (recomendado):** instale o WSL e siga as instruções do Linux acima.
+
+**Via PowerShell (sem WSL):**
+
+```powershell
+git clone https://github.com/nameMatheusValverde/termbibli.git
+cd termbibli\versiculos
+
+# Executa diretamente
+python terbibli
+
+# Cria alias permanente no perfil do PowerShell
+Add-Content $PROFILE "`nfunction terbibli { python '$PWD\terbibli' @args }"
+. $PROFILE
+```
+
+> O leitor visual (`--visual`) requer um terminal com suporte a curses. No Windows, use o Windows Terminal com WSL para a melhor experiência.
 
 ---
 
 ## Como usar
 
 ```bash
-terbibli                     # versículo aleatório
-terbibli --dia               # mesmo versículo durante todo o dia
-terbibli --buscar <palavra>  # busca por palavra no texto ou livro
-terbibli --total             # exibe o total de versículos na Bíblia
+terbibli                       # versículo aleatório
+terbibli --dia                 # mesmo versículo durante todo o dia
+terbibli --buscar <palavra>    # busca por palavra no texto ou livro
+terbibli --tema <tema>         # busca por tema predefinido
+terbibli --total               # exibe o total de versículos na Bíblia
+terbibli --temas               # lista todos os temas disponíveis
+terbibli --visual              # abre o leitor visual da Bíblia completa
+terbibli --dia --visual        # versículo do dia destacado no leitor visual
 ```
 
 ### Exemplos
@@ -95,8 +144,57 @@ terbibli --total             # exibe o total de versículos na Bíblia
 ```bash
 terbibli --buscar amor
 terbibli --buscar salmos
-terbibli --dia
+terbibli --tema alegria
+terbibli --tema tristeza
+terbibli --tema obediência
+terbibli --dia --visual
 ```
+
+---
+
+## Temas disponíveis
+
+Use `terbibli --temas` para listar todos. Os principais:
+
+| Tema | Palavras-chave buscadas |
+|---|---|
+| `amor` | amor, amar, amou, amará |
+| `fé` | fé, fiel, fidelidade, crer, crença |
+| `esperança` | esperança, esperar, aguardar |
+| `paz` | paz, pacífico, pacificador |
+| `alegria` | alegria, alegre, regozijar, regozijo, júbilo |
+| `tristeza` | tristeza, triste, chorar, choro, lamentação, pranto |
+| `obediência` | obedecer, obediente, obediência, obedeceu |
+| `graça` | graça, gracioso, misericórdia |
+| `perdão` | perdão, perdoar, perdoa, perdoado |
+| `sabedoria` | sabedoria, sábio, entendimento, discernimento |
+| `força` | força, forte, fortalecer, poderoso |
+| `cura` | cura, curar, sarar, saúde |
+| `oração` | oração, orar, orai, rogai |
+| `salvação` | salvação, salvo, salvar, redenção |
+| `ressurreição` | ressurreição, ressuscitar, ressuscitou |
+| `gratidão` | gratidão, grato, agradecer, graças |
+| `humildade` | humildade, humilde, humilhar |
+
+---
+
+## Leitor Visual (`--visual`)
+
+O leitor visual abre uma interface interativa no terminal com a Bíblia completa:
+
+- **Painel esquerdo:** lista de todos os 66 livros
+- **Painel direito:** versículos do capítulo atual com numeração
+- Quando chamado com `--dia --visual` ou `--visual` após um versículo aleatório, o versículo exibido aparece **destacado em amarelo** na posição exata da Bíblia
+
+### Navegação
+
+| Tecla | Ação |
+|---|---|
+| `↑` / `↓` | Rolar versículos |
+| `←` / `→` | Capítulo anterior / próximo |
+| `PgUp` / `PgDn` | Rolar página inteira |
+| `Home` / `End` | Ir ao início / fim do capítulo |
+| `q` ou `Esc` | Sair |
 
 ---
 

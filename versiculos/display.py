@@ -41,12 +41,13 @@ def exibir(referencia: str, texto: str, titulo: str = "Versículo do Dia") -> No
     print(f"{CYAN}└{borda}┘{RESET}\n")
 
 
-def listar_resultados(resultados: list[tuple[str, str]]) -> None:
+def listar_resultados(resultados: list[tuple[str, str]], titulo_prefixo: str = "") -> None:
     """Exibe uma lista de versículos encontrados numa busca."""
     if not resultados:
         print(f"\n{YELLOW}Nenhum versículo encontrado.{RESET}\n")
         return
 
-    print(f"\n{BOLD}{CYAN}Encontrados: {len(resultados)} versículo(s){RESET}\n")
+    prefixo = f"{titulo_prefixo} " if titulo_prefixo else ""
+    print(f"\n{BOLD}{CYAN}{prefixo}Encontrados: {len(resultados)} versículo(s){RESET}\n")
     for i, (ref, texto) in enumerate(resultados, 1):
-        exibir(ref, texto, titulo=f"Resultado {i}/{len(resultados)}")
+        exibir(ref, texto, titulo=f"{titulo_prefixo} {i}/{len(resultados)}".strip())

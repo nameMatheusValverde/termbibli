@@ -3,10 +3,13 @@
 terbibli — versículos bíblicos no terminal (Termu Linux)
 
 Uso:
-    terbibli               → versículo aleatório
-    terbibli --dia         → versículo fixo do dia
-    terbibli --buscar amor → busca por palavra-chave
-    terbibli --total       → quantidade de versículos na Bíblia
+    terbibli                       → versículo aleatório
+    terbibli --dia                 → versículo fixo do dia
+    terbibli --buscar amor         → busca por palavra-chave
+    terbibli --tema alegria        → busca por tema predefinido
+    terbibli --total               → quantidade de versículos na Bíblia
+    terbibli --visual              → abre leitor visual da Bíblia completa
+    terbibli --dia --visual        → versículo do dia destacado no leitor visual
 """
 
 import sys
@@ -27,9 +30,19 @@ def main():
     grupo = parser.add_mutually_exclusive_group()
     grupo.add_argument("--dia",    action="store_true", help="Versículo fixo do dia")
     grupo.add_argument("--buscar", metavar="TERMO",     help="Busca por palavra-chave")
+    grupo.add_argument("--tema",   metavar="TEMA",      help="Busca por tema (ex: alegria, tristeza, obediência)")
     grupo.add_argument("--total",  action="store_true", help="Total de versículos na Bíblia")
+    parser.add_argument("--visual", action="store_true", help="Abre o leitor visual da Bíblia")
+    parser.add_argument("--temas", action="store_true", help="Lista os temas disponíveis")
 
     args = parser.parse_args()
+
+    if args.temas:
+        print(f"\n\033[1m\033[36mTemas disponíveis:\033[0m\n")
+        for nome, palavras in biblia.TEMAS.items():
+            print(f"  \033[33m{nome:<16}\033[0m → {', '.join(palavras[:3])}{'...' if len(palavras) > 3 else ''}")
+        print()
+        return
 
     if args.buscar is not None:
         termo = args.buscar.strip()
@@ -41,19 +54,34 @@ def main():
             parser.error("O termo de busca contém caracteres inválidos.")
         args.buscar = termo
 
+    if args.tema is not None:
+        tema = args.tema.strip().lower()
+        if tema not in biblia.TEMAS:
+            temas_str = ", ".join(biblia.TEMAS.keys())
+            parser.error(f"Tema desconhecido. Temas disponíveis: {temas_str}")
+        args.tema = tema
+
     try:
         dados = biblia.carregar()
     except Exception as e:
         print(f"Erro ao carregar a Bíblia: {e}")
         return
 
+    referencia = None
+
     if args.dia:
         ref, texto = biblia.do_dia(dados)
         display.exibir(ref, texto, titulo="Versículo do Dia")
+        referencia = ref
 
     elif args.buscar:
         resultados = biblia.buscar(dados, args.buscar)
         display.listar_resultados(resultados)
+
+    elif args.tema:
+        resultados = biblia.buscar_tema(dados, args.tema)
+        nome_tema = args.tema.capitalize()
+        display.listar_resultados(resultados, titulo_prefixo=f"[{nome_tema}]")
 
     elif args.total:
         total = sum(
@@ -64,6 +92,11 @@ def main():
     else:
         ref, texto = biblia.aleatorio(dados)
         display.exibir(ref, texto, titulo="Versículo Aleatório")
+        referencia = ref
+
+    if args.visual:
+        import biblia_visual
+        biblia_visual.run(dados, referencia)
 
 
 if __name__ == "__main__":
