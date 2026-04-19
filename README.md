@@ -1,4 +1,4 @@
-# Termu Linux — terbibli
+# terbibli
 
 Ferramenta de linha de comando em Python que exibe versículos bíblicos no terminal com formatação colorida. A Bíblia completa em português (Almeida Atualizada — 31.104 versículos) é baixada automaticamente na primeira execução e salva em cache local, sem necessidade de nenhuma dependência externa.
 
@@ -207,10 +207,3 @@ O termo passado em `--buscar` é validado antes de qualquer processamento:
 - Apenas letras, espaços e caracteres acentuados do português são aceitos
 
 ---
-
-## .gitignore recomendado
-
-```
-biblia_cache.json
-.claude/settings.local.json
-```
