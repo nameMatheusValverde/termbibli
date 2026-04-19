@@ -3,11 +3,14 @@
 terbibli — versículos bíblicos no terminal (Termu Linux)
 
 Uso:
-    terbibli                       → versículo aleatório
+    terbibli                       → versículo aleatório (Almeida Atualizada)
+    terbibli --versao acf          → usa outra versão da Bíblia
+    terbibli --versoes             → lista as versões disponíveis
     terbibli --dia                 → versículo fixo do dia
     terbibli --buscar amor         → busca por palavra-chave
     terbibli --tema alegria        → busca por tema predefinido
     terbibli --total               → quantidade de versículos na Bíblia
+    terbibli --info                → informações sobre o cache local
     terbibli --visual              → abre leitor visual da Bíblia completa
     terbibli --dia --visual        → versículo do dia destacado no leitor visual
 """
@@ -32,11 +35,23 @@ def main():
     grupo.add_argument("--buscar", metavar="TERMO",     help="Busca por palavra-chave")
     grupo.add_argument("--tema",   metavar="TEMA",      help="Busca por tema (ex: alegria, tristeza, obediência)")
     grupo.add_argument("--total",  action="store_true", help="Total de versículos na Bíblia")
-    parser.add_argument("--visual", action="store_true", help="Abre o leitor visual da Bíblia")
-    parser.add_argument("--temas", action="store_true", help="Lista os temas disponíveis")
-    parser.add_argument("--info",  action="store_true", help="Informações sobre o cache local da Bíblia")
+    parser.add_argument("--versao",  metavar="VERSAO",  default=biblia.VERSAO_PADRAO,
+                        help=f"Versão da Bíblia (padrão: {biblia.VERSAO_PADRAO}). Use --versoes para listar.")
+    parser.add_argument("--versoes", action="store_true", help="Lista as versões disponíveis para download")
+    parser.add_argument("--visual",  action="store_true", help="Abre o leitor visual da Bíblia")
+    parser.add_argument("--temas",   action="store_true", help="Lista os temas disponíveis")
+    parser.add_argument("--info",    action="store_true", help="Informações sobre o cache local da Bíblia")
 
     args = parser.parse_args()
+
+    if args.versoes:
+        print(f"\n\033[1m\033[36mVersões disponíveis:\033[0m\n")
+        for codigo, nome in biblia.VERSOES.items():
+            cached = " \033[32m[em cache]\033[0m" if biblia._cache_path(codigo).exists() else ""
+            padrao = " \033[33m(padrão)\033[0m" if codigo == biblia.VERSAO_PADRAO else ""
+            print(f"  \033[33m{codigo:<6}\033[0m {nome}{padrao}{cached}")
+        print()
+        return
 
     if args.temas:
         print(f"\n\033[1m\033[36mTemas disponíveis:\033[0m\n")
@@ -45,12 +60,18 @@ def main():
         print()
         return
 
+    versao = args.versao.strip().lower()
+    if versao not in biblia.VERSOES:
+        versoes_str = ", ".join(biblia.VERSOES.keys())
+        parser.error(f"Versão desconhecida: '{versao}'. Use --versoes para ver as opções.")
+
     if args.info:
-        info = biblia.info_cache()
+        info = biblia.info_cache(versao)
         if info is None:
-            print("\nCache não encontrado. Execute terbibli para baixar a Bíblia.\n")
+            print(f"\nCache não encontrado para '{versao}'. Execute terbibli --versao {versao} para baixar.\n")
         else:
             print(f"\n\033[1m\033[36mCache da Bíblia\033[0m")
+            print(f"  Versão     : {info['nome']} ({info['versao']})")
             print(f"  Versículos : {info['total_versos']:,}")
             print(f"  Tamanho    : {info['tamanho_mb']:.1f} MB")
             print(f"  Atualizado : {info['atualizado']}")
@@ -75,7 +96,7 @@ def main():
         args.tema = tema
 
     try:
-        dados = biblia.carregar()
+        dados = biblia.carregar(versao)
     except Exception as e:
         print(f"Erro ao carregar a Bíblia: {e}")
         return

@@ -1,11 +1,11 @@
 # Cache da Bíblia (baixado automaticamente na primeira execução)
-biblia_cache.json
+biblia_cache_*.json
 
 # Python
 __pycache__/
 *.py[cod]
 *.pyo
-test_bibli.py
+test_biblia.py
 
 # Ambientes virtuais
 .venv/

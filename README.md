@@ -129,7 +129,9 @@ Add-Content $PROFILE "`nfunction terbibli { python '$PWD\terbibli' @args }"
 ## Como usar
 
 ```bash
-terbibli                       # versículo aleatório
+terbibli                       # versículo aleatório (padrão: Almeida Atualizada)
+terbibli --versao acf          # usa outra versão da Bíblia
+terbibli --versoes             # lista as versões disponíveis para download
 terbibli --dia                 # mesmo versículo durante todo o dia
 terbibli --buscar <palavra>    # busca por palavra no texto ou livro
 terbibli --tema <tema>         # busca por tema predefinido
@@ -145,11 +147,13 @@ terbibli --dia --visual        # versículo do dia destacado no leitor visual
 ```bash
 terbibli --buscar amor
 terbibli --buscar salmos
-terbibli --buscar "1 João"     # livros numerados funcionam normalmente
-terbibli --buscar forca        # busca sem acento encontra "força"
+terbibli --buscar "1 João"          # livros numerados funcionam normalmente
+terbibli --buscar forca             # busca sem acento encontra "força"
+terbibli --versao acf --buscar amor # busca em outra versão
 terbibli --tema alegria
 terbibli --tema tristeza
 terbibli --tema obediência
+terbibli --versoes
 terbibli --info
 terbibli --dia --visual
 ```
@@ -202,17 +206,45 @@ O leitor visual abre uma interface interativa no terminal com a Bíblia completa
 
 ---
 
+## Versões da Bíblia
+
+Três versões estão disponíveis para download:
+
+| Código | Nome completo |
+|---|---|
+| `aa` | Almeida Atualizada *(padrão)* |
+| `acf` | Almeida Corrigida Fiel |
+| `nvi` | Nova Versão Internacional |
+
+Cada versão é baixada e armazenada em cache separadamente (`biblia_cache_aa.json`, `biblia_cache_acf.json`, etc.). Para ver quais já estão em cache:
+
+```bash
+terbibli --versoes
+```
+
+O flag `--versao` combina com qualquer outro comando:
+
+```bash
+terbibli --versao nvi                 # versículo aleatório na NVI
+terbibli --versao acf --dia           # versículo do dia na ACF
+terbibli --versao nvi --buscar amor   # busca na NVI
+terbibli --versao acf --info          # info do cache da ACF
+```
+
+---
+
 ## Cache local
 
-A Bíblia é baixada automaticamente na primeira execução e salva em `versiculos/biblia_cache.json`. Nas execuções seguintes, o arquivo local é usado diretamente — sem acesso à internet.
+A Bíblia é baixada automaticamente na primeira execução de cada versão e salva em cache local. Nas execuções seguintes, o arquivo local é usado diretamente — sem acesso à internet.
 
 Se o cache estiver corrompido, o terbibli detecta automaticamente e refaz o download.
 
-Para inspecionar o cache:
+Para inspecionar o cache da versão ativa:
 
 ```bash
 terbibli --info
 # Cache da Bíblia
+#   Versão     : Almeida Atualizada (aa)
 #   Versículos : 31.104
 #   Tamanho    : 3.8 MB
 #   Atualizado : 18/04/2026 19:57:41
