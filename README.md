@@ -68,7 +68,7 @@ python3 --version
 
 ```bash
 # Clone o repositório
-git clone <url-do-repositorio>
+git clone nameMatheusValverde
 cd versiculos
 ```
 
