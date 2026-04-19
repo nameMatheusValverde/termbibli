@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
-Ponto de entrada do sistema de versículos.
+terbibli — versículos bíblicos no terminal (Termu Linux)
 
 Uso:
-    python3 main.py               → versículo aleatório
-    python3 main.py --dia         → versículo fixo do dia
-    python3 main.py --buscar amor → busca por palavra-chave
-    python3 main.py --total       → quantidade de versículos na Bíblia
+    terbibli               → versículo aleatório
+    terbibli --dia         → versículo fixo do dia
+    terbibli --buscar amor → busca por palavra-chave
+    terbibli --total       → quantidade de versículos na Bíblia
 """
+
+import sys
+import os
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import argparse
 import biblia
@@ -16,7 +21,8 @@ import display
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Sistema de versículos bíblicos no terminal."
+        prog="terbibli",
+        description="Termu Linux — versículos bíblicos no terminal."
     )
     grupo = parser.add_mutually_exclusive_group()
     grupo.add_argument("--dia",    action="store_true", help="Versículo fixo do dia")
@@ -24,6 +30,16 @@ def main():
     grupo.add_argument("--total",  action="store_true", help="Total de versículos na Bíblia")
 
     args = parser.parse_args()
+
+    if args.buscar is not None:
+        termo = args.buscar.strip()
+        if not termo:
+            parser.error("O termo de busca não pode ser vazio.")
+        if len(termo) > 100:
+            parser.error("O termo de busca deve ter no máximo 100 caracteres.")
+        if not all(c.isalpha() or c.isspace() or c in "áéíóúãõâêôàçÁÉÍÓÚÃÕÂÊÔÀÇ'-" for c in termo):
+            parser.error("O termo de busca contém caracteres inválidos.")
+        args.buscar = termo
 
     try:
         dados = biblia.carregar()
