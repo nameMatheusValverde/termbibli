@@ -53,11 +53,14 @@ def _normalizar(texto: str) -> str:
 
 
 def _baixar() -> list:
-    print("Baixando Bíblia... (apenas na primeira vez)")
+    print("Baixando Bíblia... (apenas na primeira vez)", end="", flush=True)
     try:
         with urllib.request.urlopen(URL_BIBLIA, timeout=10) as resp:
+            print(" [conectado]", end="", flush=True)
             dados = json.loads(resp.read().decode("utf-8-sig"))
+        print(" [salvando]", end="", flush=True)
         CACHE.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
+        print(" Pronto!")
         return dados
     except urllib.error.URLError as e:
         print(f"\nErro: Não foi possível conectar à internet.\n   {e}")
@@ -71,8 +74,37 @@ def _baixar() -> list:
 def carregar() -> list:
     """Retorna a Bíblia completa. Usa cache se já baixou antes."""
     if CACHE.exists():
-        return json.loads(CACHE.read_text(encoding="utf-8"))
+        try:
+            dados = json.loads(CACHE.read_text(encoding="utf-8"))
+            if not isinstance(dados, list) or len(dados) != 66:
+                print("Cache corrompido, refazendo download...")
+                CACHE.unlink()
+                return _baixar()
+            return dados
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            print("Cache corrompido, refazendo download...")
+            CACHE.unlink()
+            return _baixar()
     return _baixar()
+
+
+def info_cache() -> dict | None:
+    """Retorna informações sobre o cache local, ou None se não existir."""
+    if not CACHE.exists():
+        return None
+    from datetime import datetime
+    stat = CACHE.stat()
+    try:
+        dados = json.loads(CACHE.read_text(encoding="utf-8"))
+        total = sum(len(cap) for livro in dados for cap in livro["chapters"])
+    except Exception:
+        total = 0
+    return {
+        "total_versos": total,
+        "tamanho_mb": stat.st_size / (1024 * 1024),
+        "atualizado": datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y %H:%M:%S"),
+        "fonte": URL_BIBLIA,
+    }
 
 
 def aleatorio(biblia: list) -> tuple[str, str]:

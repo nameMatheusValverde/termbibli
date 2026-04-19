@@ -5,6 +5,7 @@ biblia_cache.json
 __pycache__/
 *.py[cod]
 *.pyo
+test_bibli.py
 
 # Ambientes virtuais
 .venv/

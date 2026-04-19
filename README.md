@@ -135,6 +135,7 @@ terbibli --buscar <palavra>    # busca por palavra no texto ou livro
 terbibli --tema <tema>         # busca por tema predefinido
 terbibli --total               # exibe o total de versículos na Bíblia
 terbibli --temas               # lista todos os temas disponíveis
+terbibli --info                # informações sobre o cache local da Bíblia
 terbibli --visual              # abre o leitor visual da Bíblia completa
 terbibli --dia --visual        # versículo do dia destacado no leitor visual
 ```
@@ -144,9 +145,12 @@ terbibli --dia --visual        # versículo do dia destacado no leitor visual
 ```bash
 terbibli --buscar amor
 terbibli --buscar salmos
+terbibli --buscar "1 João"     # livros numerados funcionam normalmente
+terbibli --buscar forca        # busca sem acento encontra "força"
 terbibli --tema alegria
 terbibli --tema tristeza
 terbibli --tema obediência
+terbibli --info
 terbibli --dia --visual
 ```
 
@@ -195,6 +199,25 @@ O leitor visual abre uma interface interativa no terminal com a Bíblia completa
 | `PgUp` / `PgDn` | Rolar página inteira |
 | `Home` / `End` | Ir ao início / fim do capítulo |
 | `q` ou `Esc` | Sair |
+
+---
+
+## Cache local
+
+A Bíblia é baixada automaticamente na primeira execução e salva em `versiculos/biblia_cache.json`. Nas execuções seguintes, o arquivo local é usado diretamente — sem acesso à internet.
+
+Se o cache estiver corrompido, o terbibli detecta automaticamente e refaz o download.
+
+Para inspecionar o cache:
+
+```bash
+terbibli --info
+# Cache da Bíblia
+#   Versículos : 31.104
+#   Tamanho    : 3.8 MB
+#   Atualizado : 18/04/2026 19:57:41
+#   Fonte      : https://raw.githubusercontent.com/...
+```
 
 ---
 

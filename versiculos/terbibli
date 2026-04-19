@@ -34,6 +34,7 @@ def main():
     grupo.add_argument("--total",  action="store_true", help="Total de versículos na Bíblia")
     parser.add_argument("--visual", action="store_true", help="Abre o leitor visual da Bíblia")
     parser.add_argument("--temas", action="store_true", help="Lista os temas disponíveis")
+    parser.add_argument("--info",  action="store_true", help="Informações sobre o cache local da Bíblia")
 
     args = parser.parse_args()
 
@@ -42,6 +43,18 @@ def main():
         for nome, palavras in biblia.TEMAS.items():
             print(f"  \033[33m{nome:<16}\033[0m → {', '.join(palavras[:3])}{'...' if len(palavras) > 3 else ''}")
         print()
+        return
+
+    if args.info:
+        info = biblia.info_cache()
+        if info is None:
+            print("\nCache não encontrado. Execute terbibli para baixar a Bíblia.\n")
+        else:
+            print(f"\n\033[1m\033[36mCache da Bíblia\033[0m")
+            print(f"  Versículos : {info['total_versos']:,}")
+            print(f"  Tamanho    : {info['tamanho_mb']:.1f} MB")
+            print(f"  Atualizado : {info['atualizado']}")
+            print(f"  Fonte      : {info['fonte']}\n")
         return
 
     if args.buscar is not None:
