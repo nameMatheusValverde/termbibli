@@ -23,7 +23,7 @@ O processo foi:
 |---|---|
 | **Python 3.10+** | Linguagem principal do projeto |
 | **Claude Code** | IA utilizada para gerar e refinar o código |
-| **GitHub (thiagobodruk/biblia)** | Fonte da Bíblia completa em JSON |
+| **GitHub (thiagobodruk/biblia)** | Fonte da Bíblia completa em JSON — versão **Almeida Atualizada (AA)** |
 
 ### Bibliotecas Python (todas nativas — sem instalação extra)
 
@@ -204,6 +204,6 @@ O termo passado em `--buscar` é validado antes de qualquer processamento:
 
 - Não pode ser vazio
 - Máximo de 100 caracteres
-- Apenas letras, espaços e caracteres acentuados do português são aceitos
+- Apenas letras, números, espaços, caracteres acentuados e símbolos básicos (`- ' ( ) : . , ;`) são aceitos
 
 ---

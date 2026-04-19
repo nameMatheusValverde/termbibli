@@ -50,8 +50,8 @@ def main():
             parser.error("O termo de busca não pode ser vazio.")
         if len(termo) > 100:
             parser.error("O termo de busca deve ter no máximo 100 caracteres.")
-        if not all(c.isalpha() or c.isspace() or c in "áéíóúãõâêôàçÁÉÍÓÚÃÕÂÊÔÀÇ'-" for c in termo):
-            parser.error("O termo de busca contém caracteres inválidos.")
+        if not all(c.isalnum() or c.isspace() or c in "áéíóúãõâêôàçÁÉÍÓÚÃÕÂÊÔÀÇ'-():.,;" for c in termo):
+            parser.error("O termo contém caracteres inválidos. Use apenas letras, números e símbolos básicos.")
         args.buscar = termo
 
     if args.tema is not None:

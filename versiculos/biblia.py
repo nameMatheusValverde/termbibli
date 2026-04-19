@@ -12,6 +12,9 @@ Estrutura do JSON baixado:
 
 import json
 import random
+import re
+import unicodedata
+import urllib.error
 import urllib.request
 from pathlib import Path
 from datetime import date
@@ -43,12 +46,26 @@ URL_BIBLIA = "https://raw.githubusercontent.com/thiagobodruk/biblia/master/json/
 CACHE = Path(__file__).parent / "biblia_cache.json"
 
 
+def _normalizar(texto: str) -> str:
+    """Remove acentos para busca robusta (força → forca)."""
+    nfd = unicodedata.normalize("NFD", texto.lower())
+    return "".join(c for c in nfd if unicodedata.category(c) != "Mn")
+
+
 def _baixar() -> list:
     print("Baixando Bíblia... (apenas na primeira vez)")
-    with urllib.request.urlopen(URL_BIBLIA, timeout=10) as resp:
-        dados = json.loads(resp.read().decode("utf-8-sig"))
-    CACHE.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
-    return dados
+    try:
+        with urllib.request.urlopen(URL_BIBLIA, timeout=10) as resp:
+            dados = json.loads(resp.read().decode("utf-8-sig"))
+        CACHE.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
+        return dados
+    except urllib.error.URLError as e:
+        print(f"\nErro: Não foi possível conectar à internet.\n   {e}")
+        print("   Verifique sua conexão e tente novamente.")
+        raise SystemExit(1)
+    except json.JSONDecodeError as e:
+        print(f"\nErro: JSON inválido recebido da internet: {e}")
+        raise SystemExit(1)
 
 
 def carregar() -> list:
@@ -78,15 +95,19 @@ def do_dia(biblia: list) -> tuple[str, str]:
 
 
 def buscar(biblia: list, termo: str) -> list[tuple[str, str]]:
-    """Busca versículos que contenham o termo no texto ou no nome do livro."""
-    termo = termo.lower()
+    """Busca versículos que contenham o termo (case e acento insensitive)."""
+    termo_norm = _normalizar(termo)
+    vistos: set[str] = set()
     resultados = []
     for livro in biblia:
         for cap_idx, capitulo in enumerate(livro["chapters"]):
             for ver_idx, texto in enumerate(capitulo):
-                if termo in texto.lower() or termo in livro["name"].lower():
+                if (termo_norm in _normalizar(texto)
+                        or termo_norm in _normalizar(livro["name"])):
                     ref = f"{livro['name']} {cap_idx + 1}:{ver_idx + 1}"
-                    resultados.append((ref, texto))
+                    if ref not in vistos:
+                        vistos.add(ref)
+                        resultados.append((ref, texto))
     return resultados
 
 
@@ -109,17 +130,22 @@ def buscar_tema(biblia: list, tema: str) -> list[tuple[str, str]]:
     return resultados
 
 
-def encontrar_indices(biblia: list, referencia: str):
+def encontrar_indices(biblia: list, referencia: str) -> tuple | None:
     """Converte 'Livro cap:ver' em (book_idx, cap_idx, ver_idx) ou None."""
     try:
-        partes = referencia.rsplit(" ", 1)
-        livro_nome = partes[0]
-        cap_str, ver_str = partes[1].split(":")
+        match = re.search(r"^(.+)\s+(\d+):(\d+)$", referencia.strip())
+        if not match:
+            return None
+        livro_nome, cap_str, ver_str = match.groups()
         cap_idx = int(cap_str) - 1
         ver_idx = int(ver_str) - 1
+        livro_lower = livro_nome.lower().strip()
         for i, livro in enumerate(biblia):
-            if livro["name"] == livro_nome:
-                return i, cap_idx, ver_idx
-    except Exception:
+            if livro["name"].lower() == livro_lower:
+                if 0 <= cap_idx < len(livro["chapters"]):
+                    if 0 <= ver_idx < len(livro["chapters"][cap_idx]):
+                        return i, cap_idx, ver_idx
+                return None
+    except (ValueError, AttributeError):
         pass
     return None
