@@ -1,0 +1,23 @@
+# Cache da Bíblia (baixado automaticamente na primeira execução)
+biblia_cache.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+.claude/settings.local.json
