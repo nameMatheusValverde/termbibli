@@ -68,7 +68,7 @@ python3 --version
 
 ```bash
 # Clone o repositório
-git clone nameMatheusValverde
+git clone https://github.com/nameMatheusValverde/termbibli.git
 cd versiculos
 ```
 
