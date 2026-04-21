@@ -6,9 +6,9 @@ Uso direto:
     python3 biblia_visual.py
     python3 biblia_visual.py "Gênesis 1:1"   # abre e destaca o versículo
 
-Via terbibli:
-    terbibli --visual
-    terbibli --dia --visual
+Via termbibli:
+    termbibli --visual
+    termbibli --dia --visual
 """
 
 import curses
@@ -76,7 +76,7 @@ def _tela(stdscr, dados: list, destaque_orig: tuple | None):
         capitulo = livro["chapters"][cap_idx] if cap_idx < len(livro["chapters"]) else []
 
         # Cabeçalho global
-        titulo  = " terbibli — Bíblia Visual "
+        titulo  = " termbibli — Bíblia Visual "
         atalhos = " q:sair  ←→:capítulo  ↑↓:rolar  PgUp/PgDn "
         header  = titulo + atalhos.rjust(w - len(titulo) - 1)[: w - len(titulo) - 1]
         try:
@@ -197,7 +197,7 @@ def _tela(stdscr, dados: list, destaque_orig: tuple | None):
 
 
 def run(dados: list, referencia: str | None = None):
-    """Ponto de entrada chamado pelo terbibli."""
+    """Ponto de entrada chamado pelo termbibli."""
     destaque = bib.encontrar_indices(dados, referencia) if referencia else None
     curses.wrapper(_tela, dados, destaque)
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-terbibli — versículos bíblicos no terminal (Termu Linux)
+termbibli — versículos bíblicos no terminal (Termu Linux)
 
 Uso:
-    terbibli                       → versículo aleatório (Almeida Atualizada)
-    terbibli --versao acf          → usa outra versão da Bíblia
-    terbibli --versoes             → lista as versões disponíveis
-    terbibli --dia                 → versículo fixo do dia
-    terbibli --buscar amor         → busca por palavra-chave
-    terbibli --tema alegria        → busca por tema predefinido
-    terbibli --total               → quantidade de versículos na Bíblia
-    terbibli --info                → informações sobre o cache local
-    terbibli --visual              → abre leitor visual da Bíblia completa
-    terbibli --dia --visual        → versículo do dia destacado no leitor visual
+    termbibli                       → versículo aleatório (Almeida Atualizada)
+    termbibli --versao acf          → usa outra versão da Bíblia
+    termbibli --versoes             → lista as versões disponíveis
+    termbibli --dia                 → versículo fixo do dia
+    termbibli --buscar amor         → busca por palavra-chave
+    termbibli --tema alegria        → busca por tema predefinido
+    termbibli --total               → quantidade de versículos na Bíblia
+    termbibli --info                → informações sobre o cache local
+    termbibli --visual              → abre leitor visual da Bíblia completa
+    termbibli --dia --visual        → versículo do dia destacado no leitor visual
 """
 
 import sys
@@ -27,7 +27,7 @@ import display
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="terbibli",
+        prog="termbibli",
         description="Termu Linux — versículos bíblicos no terminal."
     )
     grupo = parser.add_mutually_exclusive_group()
@@ -68,7 +68,7 @@ def main():
     if args.info:
         info = biblia.info_cache(versao)
         if info is None:
-            print(f"\nCache não encontrado para '{versao}'. Execute terbibli --versao {versao} para baixar.\n")
+            print(f"\nCache não encontrado para '{versao}'. Execute termbibli --versao {versao} para baixar.\n")
         else:
             print(f"\n\033[1m\033[36mCache da Bíblia\033[0m")
             print(f"  Versão     : {info['nome']} ({info['versao']})")

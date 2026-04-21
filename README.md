@@ -1,4 +1,4 @@
-# terbibli
+# termbibli
 
 Ferramenta de linha de comando em Python que exibe versículos bíblicos no terminal com formatação colorida. A Bíblia completa em português (Almeida Atualizada — 31.104 versículos) é baixada automaticamente na primeira execução e salva em cache local, sem necessidade de nenhuma dependência externa.
 
@@ -13,7 +13,7 @@ O processo foi:
 2. Claude Code gerou a estrutura inicial com versículos fixos em um vetor
 3. Após feedback, foi refatorado para buscar a Bíblia completa automaticamente via internet
 4. Ajustes de encoding (UTF-8 BOM) e chaves do JSON foram corrigidos iterativamente
-5. Renomeado para **Termu Linux** com comando `terbibli` e camada de validação de entrada
+5. Renomeado para **Termu Linux** com comando `termbibli` e camada de validação de entrada
 
 ---
 
@@ -45,7 +45,7 @@ O processo foi:
 
 ```
 versiculos/
-├── terbibli           # Executável — ponto de entrada do comando
+├── termbibli           # Executável — ponto de entrada do comando
 ├── biblia.py          # Download, cache e lógica (aleatorio, do_dia, buscar, buscar_tema)
 ├── display.py         # Formatação e cores no terminal (caixas ANSI)
 ├── biblia_visual.py   # Leitor visual interativo (curses TUI)
@@ -75,8 +75,8 @@ python3 --version
 git clone https://github.com/nameMatheusValverde/termbibli.git
 cd termbibli/versiculos
 
-chmod +x terbibli
-ln -sf "$PWD/terbibli" ~/.local/bin/terbibli
+chmod +x termbibli
+ln -sf "$PWD/termbibli" ~/.local/bin/termbibli
 ```
 
 Se `~/.local/bin` não estiver no PATH, adicione ao `~/.bashrc` ou `~/.zshrc`:
@@ -90,16 +90,16 @@ export PATH="$HOME/.local/bin:$PATH"
 git clone https://github.com/nameMatheusValverde/termbibli.git
 cd termbibli/versiculos
 
-chmod +x terbibli
+chmod +x termbibli
 
 # Opção 1 — link simbólico (recomendado)
 mkdir -p ~/.local/bin
-ln -sf "$PWD/terbibli" ~/.local/bin/terbibli
+ln -sf "$PWD/termbibli" ~/.local/bin/termbibli
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 
 # Opção 2 — via /usr/local/bin (requer sudo)
-sudo ln -sf "$PWD/terbibli" /usr/local/bin/terbibli
+sudo ln -sf "$PWD/termbibli" /usr/local/bin/termbibli
 ```
 
 > No macOS o Python nativo pode ser o 2.x. Instale o Python 3 via [Homebrew](https://brew.sh): `brew install python`
@@ -115,10 +115,10 @@ git clone https://github.com/nameMatheusValverde/termbibli.git
 cd termbibli\versiculos
 
 # Executa diretamente
-python terbibli
+python termbibli
 
 # Cria alias permanente no perfil do PowerShell
-Add-Content $PROFILE "`nfunction terbibli { python '$PWD\terbibli' @args }"
+Add-Content $PROFILE "`nfunction termbibli { python '$PWD\termbibli' @args }"
 . $PROFILE
 ```
 
@@ -129,40 +129,40 @@ Add-Content $PROFILE "`nfunction terbibli { python '$PWD\terbibli' @args }"
 ## Como usar
 
 ```bash
-terbibli                       # versículo aleatório (padrão: Almeida Atualizada)
-terbibli --versao acf          # usa outra versão da Bíblia
-terbibli --versoes             # lista as versões disponíveis para download
-terbibli --dia                 # mesmo versículo durante todo o dia
-terbibli --buscar <palavra>    # busca por palavra no texto ou livro
-terbibli --tema <tema>         # busca por tema predefinido
-terbibli --total               # exibe o total de versículos na Bíblia
-terbibli --temas               # lista todos os temas disponíveis
-terbibli --info                # informações sobre o cache local da Bíblia
-terbibli --visual              # abre o leitor visual da Bíblia completa
-terbibli --dia --visual        # versículo do dia destacado no leitor visual
+termbibli                       # versículo aleatório (padrão: Almeida Atualizada)
+termbibli --versao acf          # usa outra versão da Bíblia
+termbibli --versoes             # lista as versões disponíveis para download
+termbibli --dia                 # mesmo versículo durante todo o dia
+termbibli --buscar <palavra>    # busca por palavra no texto ou livro
+termbibli --tema <tema>         # busca por tema predefinido
+termbibli --total               # exibe o total de versículos na Bíblia
+termbibli --temas               # lista todos os temas disponíveis
+termbibli --info                # informações sobre o cache local da Bíblia
+termbibli --visual              # abre o leitor visual da Bíblia completa
+termbibli --dia --visual        # versículo do dia destacado no leitor visual
 ```
 
 ### Exemplos
 
 ```bash
-terbibli --buscar amor
-terbibli --buscar salmos
-terbibli --buscar "1 João"          # livros numerados funcionam normalmente
-terbibli --buscar forca             # busca sem acento encontra "força"
-terbibli --versao acf --buscar amor # busca em outra versão
-terbibli --tema alegria
-terbibli --tema tristeza
-terbibli --tema obediência
-terbibli --versoes
-terbibli --info
-terbibli --dia --visual
+termbibli --buscar amor
+termbibli --buscar salmos
+termbibli --buscar "1 João"          # livros numerados funcionam normalmente
+termbibli --buscar forca             # busca sem acento encontra "força"
+termbibli --versao acf --buscar amor # busca em outra versão
+termbibli --tema alegria
+termbibli --tema tristeza
+termbibli --tema obediência
+termbibli --versoes
+termbibli --info
+termbibli --dia --visual
 ```
 
 ---
 
 ## Temas disponíveis
 
-Use `terbibli --temas` para listar todos. Os principais:
+Use `termbibli --temas` para listar todos. Os principais:
 
 | Tema | Palavras-chave buscadas |
 |---|---|
@@ -219,16 +219,16 @@ Três versões estão disponíveis para download:
 Cada versão é baixada e armazenada em cache separadamente (`biblia_cache_aa.json`, `biblia_cache_acf.json`, etc.). Para ver quais já estão em cache:
 
 ```bash
-terbibli --versoes
+termbibli --versoes
 ```
 
 O flag `--versao` combina com qualquer outro comando:
 
 ```bash
-terbibli --versao nvi                 # versículo aleatório na NVI
-terbibli --versao acf --dia           # versículo do dia na ACF
-terbibli --versao nvi --buscar amor   # busca na NVI
-terbibli --versao acf --info          # info do cache da ACF
+termbibli --versao nvi                 # versículo aleatório na NVI
+termbibli --versao acf --dia           # versículo do dia na ACF
+termbibli --versao nvi --buscar amor   # busca na NVI
+termbibli --versao acf --info          # info do cache da ACF
 ```
 
 ---
@@ -237,12 +237,12 @@ terbibli --versao acf --info          # info do cache da ACF
 
 A Bíblia é baixada automaticamente na primeira execução de cada versão e salva em cache local. Nas execuções seguintes, o arquivo local é usado diretamente — sem acesso à internet.
 
-Se o cache estiver corrompido, o terbibli detecta automaticamente e refaz o download.
+Se o cache estiver corrompido, o termbibli detecta automaticamente e refaz o download.
 
 Para inspecionar o cache da versão ativa:
 
 ```bash
-terbibli --info
+termbibli --info
 # Cache da Bíblia
 #   Versão     : Almeida Atualizada (aa)
 #   Versículos : 31.104
