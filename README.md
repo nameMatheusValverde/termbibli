@@ -1,5 +1,9 @@
 # termbibli
 
+<p align="center">
+  <img src="image/logo.svg" alt="termbibli logo" width="220"/>
+</p>
+
 Ferramenta de linha de comando em Python que exibe versículos bíblicos no terminal com formatação colorida. A Bíblia completa em português (Almeida Atualizada — 31.104 versículos) é baixada automaticamente na primeira execução e salva em cache local, sem necessidade de nenhuma dependência externa.
 
 ---
@@ -250,15 +254,5 @@ termbibli --info
 #   Atualizado : 18/04/2026 19:57:41
 #   Fonte      : https://raw.githubusercontent.com/...
 ```
-
----
-
-## Segurança
-
-O termo passado em `--buscar` é validado antes de qualquer processamento:
-
-- Não pode ser vazio
-- Máximo de 100 caracteres
-- Apenas letras, números, espaços, caracteres acentuados e símbolos básicos (`- ' ( ) : . , ;`) são aceitos
 
 ---

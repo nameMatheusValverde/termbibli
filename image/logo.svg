@@ -1,0 +1,26 @@
+<svg width="100%" viewBox="0 0 680 480" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>termbibli icon</title>
+  <desc>Ícone de terminal com Holy Bible e cruz</desc>
+
+  <!-- Terminal body -->
+  <rect x="165" y="60" width="350" height="360" rx="18" fill="#1a1a1a"/>
+
+  <!-- Top bar -->
+  <rect x="165" y="60" width="350" height="44" rx="18" fill="#2a2a2a"/>
+  <rect x="165" y="82" width="350" height="22" fill="#2a2a2a"/>
+
+  <!-- Traffic lights -->
+  <circle cx="200" cy="82" r="8" fill="#e05252"/>
+  <circle cx="226" cy="82" r="8" fill="#e0b050"/>
+  <circle cx="252" cy="82" r="8" fill="#3ecf4e"/>
+
+  <!-- Screen area -->
+  <rect x="182" y="116" width="316" height="288" rx="6" fill="#111111"/>
+
+  <!-- Prompt: >_ Holy Bible -->
+  <text x="206" y="180" font-family="monospace" font-size="24" font-weight="700" fill="#22c55e">&gt;_ Holy Bible</text>
+
+  <!-- Cruz centralizada -->
+  <rect x="330" y="230" width="20" height="100" rx="4" fill="#22c55e"/>
+  <rect x="288" y="260" width="104" height="20" rx="4" fill="#22c55e"/>
+</svg>
